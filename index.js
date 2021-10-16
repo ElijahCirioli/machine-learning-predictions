@@ -2,44 +2,39 @@ let userMemory = [];
 let computerMemory = [];
 const memoryDepth = 10;
 const possibleInputs = 2;
-let model;
+const rewardMagnitude = 10;
+const epochs = 100;
+const confidenceThreshold = 0.1;
+let model, tensorSize;
 let score = 0;
 let disabled = false;
 
 async function chooseButton(button, letter) {
-	const inputTensor = constructMemoryTensor();
-	const prediction = await model.predict(inputTensor).dataSync();
-
-	console.log("pred: ", prediction);
-	if (prediction[0] > prediction[1]) {
-		predictionOutput = "A";
-	} else {
-		predictionOutput = "B";
-	}
-	if (predictionOutput === letter) {
-		score--;
-	} else {
-		score++;
-	}
-	$("#score-text").text(`Score: ${score}`);
-	$("#prediction-text").text(`Computer: ${predictionOutput} | You: ${letter}`);
-
-	let buttonArray = [button];
-	while (buttonArray.length < memoryDepth) {
-		buttonArray.push([0, 0]);
-	}
-	const buttonTensor = tf.tensor2d(buttonArray, [memoryDepth, 2]);
-
 	disableButtons();
 
-	const batchSize = 64;
-	const epochs = 100;
-	await model.fit(inputTensor, buttonTensor, {
-		batchSize,
-		epochs,
-	});
+	const inputTensor = constructMemoryTensor();
+	console.log("INPUT:");
+	inputTensor.print();
+	const prediction = await model.predict(inputTensor).dataSync();
+	console.log("PREDICTION:");
+	console.log(prediction);
+	const predictionIndex = getPredictionIndex(prediction);
 
-	enableButtons();
+	let reward = 0;
+
+	const possibleOutputs = ["A", "B"];
+	const predictionOutput = possibleOutputs[predictionIndex];
+
+	if (predictionOutput === letter) {
+		score--;
+		reward = rewardMagnitude;
+	} else {
+		score++;
+		reward = -rewardMagnitude;
+	}
+
+	$("#score-text").text(`Score: ${score}`);
+	$("#prediction-text").text(`Computer: ${predictionOutput} | You: ${letter}`);
 
 	// add to user memory
 	userMemory.unshift(button);
@@ -48,23 +43,77 @@ async function chooseButton(button, letter) {
 	}
 
 	// add to computer memory
+	computerMemory.unshift(getComputerOneHot(predictionIndex));
+	if (computerMemory.length > memoryDepth) {
+		computerMemory.splice(memoryDepth);
+	}
+
+	await trainModel(inputTensor, prediction, predictionIndex, reward);
+
+	enableButtons();
 }
 
-function adjustScore() {}
+function adjustScore() {
+	// TODO: move stuff in here
+}
 
 function constructMemoryTensor() {
 	const combinedArray = [];
 	for (let i = 0; i < memoryDepth; i++) {
 		for (let j = 0; j < possibleInputs; j++) {
-			combinedArray.push(userMemory[j]);
-			combinedArray.push(computerMemory[j]);
+			combinedArray.push(userMemory[i][j]);
+			combinedArray.push(computerMemory[i][j]);
 		}
 	}
 
-	return tf.tensor2d(combinedArray, [memoryDepth, possibleInputs * 2]);
+	return tf.tensor3d(combinedArray, [1, memoryDepth, possibleInputs * 2]);
 }
 
-function trainModel() {}
+function getPredictionIndex(prediction) {
+	let maxIndex = 0;
+	for (let i = 1; i < prediction.length; i++) {
+		if (prediction[i] > prediction[maxIndex]) {
+			maxIndex = i;
+		}
+	}
+	const sortedPrediction = prediction.slice().sort().reverse();
+	// this absolute value isn't really necessary but let's be safe
+	const maxDiff = Math.abs(sortedPrediction[0] - sortedPrediction[1]);
+	console.log("diff: " + maxDiff);
+	if (maxDiff < confidenceThreshold) {
+		console.log("Making a guess");
+		return Math.floor(Math.random() * prediction.length);
+	}
+	return maxIndex;
+}
+
+function getComputerOneHot(index) {
+	const result = [];
+	for (let i = 0; i < possibleInputs; i++) {
+		result.push(i == index ? 1 : 0);
+	}
+	return result;
+}
+
+async function trainModel(inputTensor, prediction, predictionIndex, reward) {
+	// backpropagate the prediction
+	for (let i = 0; i < possibleInputs; i++) {
+		if (i == predictionIndex) {
+			prediction[i] += reward;
+		}
+	}
+
+	console.log("xs:");
+	inputTensor.print();
+	const updatedPredictionTensor = tf.tensor2d(prediction, [1, 2]);
+	console.log("ys:");
+	updatedPredictionTensor.print();
+	await model.fit(inputTensor, updatedPredictionTensor, {
+		batchSize: 1,
+		epochs,
+		shuffle: false,
+	});
+}
 
 function setupModel() {
 	// fill the memory arrays with 0s
@@ -75,27 +124,26 @@ function setupModel() {
 		computerMemory.push([0, 0]);
 	}
 
+	tensorSize = memoryDepth * possibleInputs * 2;
 	// Create a sequential model
-	model = tf.sequential();
-
-	// Add a single input layer
-	model.add(tf.layers.dense({ inputShape: [4], units: memoryDepth, useBias: true }));
-
-	// Add a single hidden layer
-	model.add(tf.layers.dense({ units: 5, useBias: true }));
-
-	// Add an output layer
-	model.add(tf.layers.dense({ units: 2, useBias: true }));
+	model = tf.sequential({
+		layers: [
+			tf.layers.dense({ inputShape: [memoryDepth, possibleInputs * 2], units: possibleInputs * 4, activation: "relu" }),
+			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
+			tf.layers.flatten(),
+			tf.layers.dense({ units: possibleInputs, activation: "softmax" }),
+		],
+	});
 
 	model.compile({
 		optimizer: tf.train.adam(),
 		loss: tf.losses.meanSquaredError,
-		metrics: ["mse"],
-		layers: [
-			tf.layers.dense({ inputShape: [memoryDepth], units: 32, activation: "relu" }),
-			tf.layers.dense({ units: 10, activation: "softmax" }),
-		],
+		metrics: ["accuracy"],
 	});
+
+	//tfvis.show.modelSummary({ name: "Model Summary" }, model);
 }
 
 function disableButtons() {
