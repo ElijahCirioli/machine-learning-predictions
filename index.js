@@ -35,6 +35,7 @@ async function chooseButton(button, letter) {
 
 	$("#score-text").text(`Score: ${score}`);
 	$("#prediction-text").text(`Computer: ${predictionOutput} | You: ${letter}`);
+	$("#confidence-text").text(`Computer was ${Math.round(prediction[predictionIndex] * 100)}% confident in that prediction`);
 
 	// add to user memory
 	userMemory.unshift(button);
