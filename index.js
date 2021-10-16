@@ -5,7 +5,7 @@ const possibleInputs = 2;
 const rewardMagnitude = 100;
 const epochs = 5;
 const confidenceThreshold = 0.1;
-let model, tensorSize;
+let model;
 let score = 0;
 let disabled = false;
 
@@ -124,7 +124,6 @@ function setupModel() {
 		computerMemory.push([0, 0]);
 	}
 
-	tensorSize = memoryDepth * possibleInputs * 2;
 	// Create a sequential model
 	model = tf.sequential({
 		layers: [
@@ -142,8 +141,6 @@ function setupModel() {
 		loss: tf.losses.meanSquaredError,
 		metrics: ["accuracy"],
 	});
-
-	//tfvis.show.modelSummary({ name: "Model Summary" }, model);
 }
 
 function disableButtons() {
