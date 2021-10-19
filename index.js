@@ -7,11 +7,8 @@ const epochs = 10;
 const confidenceThreshold = 0.1;
 let model;
 let score = 0;
-let disabled = false;
 
-async function chooseButton(button, letter) {
-	disableButtons();
-
+async function chooseButton(button) {
 	const inputTensor = constructMemoryTensor();
 
 	const prediction = await model.predict(inputTensor).dataSync();
@@ -44,8 +41,6 @@ async function chooseButton(button, letter) {
 	}
 
 	await trainModel(inputTensor, prediction, predictionIndex, reward);
-
-	enableButtons();
 }
 
 function adjustScore() {
@@ -141,27 +136,6 @@ function setupModel() {
 		metrics: ["accuracy"],
 	});
 }
-
-function disableButtons() {
-	disabled = true;
-	$(".letter-button").addClass("disabled");
-}
-
-function enableButtons() {
-	disabled = false;
-	$(".letter-button").removeClass("disabled");
-}
-
-$("#a-button").click(() => {
-	if (!disabled) {
-		chooseButton([1, 0], "A");
-	}
-});
-$("#b-button").click(() => {
-	if (!disabled) {
-		chooseButton([0, 1], "B");
-	}
-});
 
 $("document").ready(() => {
 	setupModel();

@@ -1,4 +1,16 @@
 const cardDisplayTime = 3000;
+const animationDuration = 1500;
+
+function clickCard(id) {
+	const buttonLookup = {
+		aCard: [1, 0],
+		bCard: [0, 1],
+	};
+	disableButtons();
+	if (id in buttonLookup) {
+		chooseButton(buttonLookup[id]);
+	}
+}
 
 function displayComputerCard(index, possibleInputs) {
 	const outputDisplays = {
@@ -12,7 +24,7 @@ function displayComputerCard(index, possibleInputs) {
 		const params = outputDisplays[possibleInputs];
 		$("#computer-card-text").text(params.outputs[index]);
 		for (const c in params.classes) {
-			$("#computer-card-text").removeClass(c);
+			$("#computer-card-text").removeClass(params.classes[c]);
 		}
 		$("#computer-card-text").addClass(params.classes[index]);
 
@@ -26,9 +38,27 @@ function displayComputerCard(index, possibleInputs) {
 function startCardAnimation() {
 	$(".flip-card").removeClass("active-flipped");
 	$(".computer-card").addClass("animated-card");
-	setTimeout(endCardAnimation, 2000);
+	setTimeout(endCardAnimation, animationDuration);
 }
 
 function endCardAnimation() {
 	$(".computer-card").removeClass("animated-card");
+	enableButtons();
+}
+
+$("document").ready(() => {
+	enableButtons();
+	$(".clickable-card").click((e) => {
+		clickCard(e.currentTarget.id);
+		$(e.currentTarget).addClass("selected-card");
+	});
+});
+
+function disableButtons() {
+	$(".player-card").removeClass("clickable-card");
+}
+
+function enableButtons() {
+	$(".player-card").addClass("clickable-card");
+	$(".player-card").removeClass("selected-card");
 }
