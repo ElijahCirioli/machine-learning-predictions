@@ -17,6 +17,7 @@ body {
 	flex-direction: row;
 	flex-wrap: nowrap;
 	justify-content: left;
+	z-index: 2;
 }
 #content-wrap {
 	margin: 0;
@@ -85,14 +86,41 @@ body {
 	transition: transform 0.8s;
 	transform-style: preserve-3d;
 	border-radius: 15px;
+	opacity: 1;
 }
-.card:hover .flip-card {
+.active-flipped {
 	transform: rotateY(180deg);
+}
+.animated-card {
+	animation-name: remove-card;
+	animation-duration: 2s;
+	transition: opacity 0.3s transform 0.3s ease-out;
 }
 .computer-card {
 	margin: auto;
 	perspective: 1000px;
 	background-color: transparent;
+}
+@keyframes remove-card {
+	from {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	20% {
+		transform: translateY(0);
+		opacity: 0;
+	}
+
+	50% {
+		transform: translateY(-400px);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
 }
 .computer-card .card-image {
 	mask-image: url("imgs/card-back.svg");

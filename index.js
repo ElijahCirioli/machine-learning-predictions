@@ -13,19 +13,15 @@ async function chooseButton(button, letter) {
 	disableButtons();
 
 	const inputTensor = constructMemoryTensor();
-	console.log("INPUT:");
-	inputTensor.print();
+
 	const prediction = await model.predict(inputTensor).dataSync();
-	console.log("PREDICTION:");
-	console.log(prediction);
+
 	const predictionIndex = getPredictionIndex(prediction);
+	const buttonIndex = getButtonIndex(button);
 
 	let reward = 0;
 
-	const possibleOutputs = ["A", "B"];
-	const predictionOutput = possibleOutputs[predictionIndex];
-
-	if (predictionOutput === letter) {
+	if (predictionIndex === buttonIndex) {
 		score--;
 		reward = rewardMagnitude;
 	} else {
@@ -33,9 +29,7 @@ async function chooseButton(button, letter) {
 		reward = -rewardMagnitude;
 	}
 
-	$("#score-text").text(`Score: ${score}`);
-	$("#prediction-text").text(`Computer: ${predictionOutput} | You: ${letter}`);
-	$("#confidence-text").text(`Computer was ${Math.round(prediction[predictionIndex] * 100)}% confident in that prediction`);
+	displayComputerCard(predictionIndex, possibleInputs);
 
 	// add to user memory
 	userMemory.unshift(button);
@@ -80,18 +74,25 @@ function getPredictionIndex(prediction) {
 	const sortedPrediction = prediction.slice().sort().reverse();
 	// this absolute value isn't really necessary but let's be safe
 	const maxDiff = Math.abs(sortedPrediction[0] - sortedPrediction[1]);
-	console.log("diff: " + maxDiff);
 	if (maxDiff < confidenceThreshold) {
-		console.log("Making a guess");
 		return Math.floor(Math.random() * prediction.length);
 	}
 	return maxIndex;
 }
 
+function getButtonIndex(button) {
+	for (let i = 0; i < button.length; i++) {
+		if (button[i] === 1) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 function getComputerOneHot(index) {
 	const result = [];
 	for (let i = 0; i < possibleInputs; i++) {
-		result.push(i == index ? 1 : 0);
+		result.push(i === index ? 1 : 0);
 	}
 	return result;
 }
@@ -99,16 +100,12 @@ function getComputerOneHot(index) {
 async function trainModel(inputTensor, prediction, predictionIndex, reward) {
 	// backpropagate the prediction
 	for (let i = 0; i < possibleInputs; i++) {
-		if (i == predictionIndex) {
+		if (i === predictionIndex) {
 			prediction[i] += reward;
 		}
 	}
 
-	console.log("xs:");
-	inputTensor.print();
 	const updatedPredictionTensor = tf.tensor2d(prediction, [1, 2]);
-	console.log("ys:");
-	updatedPredictionTensor.print();
 	await model.fit(inputTensor, updatedPredictionTensor, {
 		batchSize: 1,
 		epochs,
