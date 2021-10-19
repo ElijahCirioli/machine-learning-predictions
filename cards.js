@@ -51,6 +51,7 @@ $("document").ready(() => {
 	$(".clickable-card").click((e) => {
 		clickCard(e.currentTarget.id);
 		$(e.currentTarget).addClass("selected-card");
+		$(".player-card").not(e.currentTarget).addClass("unselected-card");
 	});
 });
 
@@ -61,4 +62,5 @@ function disableButtons() {
 function enableButtons() {
 	$(".player-card").addClass("clickable-card");
 	$(".player-card").removeClass("selected-card");
+	$(".player-card").removeClass("unselected-card");
 }
