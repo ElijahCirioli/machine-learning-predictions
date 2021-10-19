@@ -5,13 +5,14 @@ const possibleInputs = 2;
 const rewardMagnitude = 100;
 const epochs = 10;
 const confidenceThreshold = 0.1;
-let model;
+let model, prediction;
 let score = 0;
+let training = false;
 
 async function chooseButton(button) {
-	const inputTensor = constructMemoryTensor();
-
-	const prediction = await model.predict(inputTensor).dataSync();
+	if (!prediction) {
+		return;
+	}
 
 	const predictionIndex = getPredictionIndex(prediction);
 	const buttonIndex = getButtonIndex(button);
@@ -26,7 +27,11 @@ async function chooseButton(button) {
 		reward = -rewardMagnitude;
 	}
 
+	training = true;
 	displayComputerCard(predictionIndex, possibleInputs);
+
+	let inputTensor = constructMemoryTensor();
+	await trainModel(inputTensor, prediction, predictionIndex, reward);
 
 	// add to user memory
 	userMemory.unshift(button);
@@ -40,7 +45,13 @@ async function chooseButton(button) {
 		computerMemory.splice(memoryDepth);
 	}
 
-	await trainModel(inputTensor, prediction, predictionIndex, reward);
+	inputTensor = constructMemoryTensor();
+	prediction = await model.predict(inputTensor).dataSync();
+
+	training = false;
+	if (!animating && disabled) {
+		enableButtons();
+	}
 }
 
 function adjustScore() {
@@ -108,7 +119,7 @@ async function trainModel(inputTensor, prediction, predictionIndex, reward) {
 	});
 }
 
-function setupModel() {
+async function setupModel() {
 	// fill the memory arrays with 0s
 	while (userMemory.length < memoryDepth) {
 		userMemory.push([0, 0]);
@@ -130,11 +141,17 @@ function setupModel() {
 		],
 	});
 
-	model.compile({
+	await model.compile({
 		optimizer: tf.train.adam(),
 		loss: tf.losses.meanSquaredError,
 		metrics: ["accuracy"],
 	});
+
+	const inputTensor = constructMemoryTensor();
+	prediction = await model.predict(inputTensor).dataSync();
+
+	enableButtons();
+	setupButtonActions();
 }
 
 $("document").ready(() => {
