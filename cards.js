@@ -40,9 +40,6 @@ function displayComputerCard(index, possibleInputs) {
 }
 
 function startCardAnimation() {
-	if (!animating) {
-		return;
-	}
 	$(".flip-card").removeClass("active-flipped");
 	$(".computer-card").addClass("animated-card");
 	setTimeout(endCardAnimation, animationDuration);
@@ -82,13 +79,3 @@ function setupButtonActions() {
 		$(".player-card").not(e.currentTarget).addClass("unselected-card");
 	});
 }
-
-$("document").ready(() => {
-	$("body").click((e) => {
-		if (disabled && animating && !training) {
-			$(".flip-card").removeClass("active-flipped");
-			enableButtons();
-			endCardAnimation();
-		}
-	});
-});

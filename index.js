@@ -26,6 +26,7 @@ async function chooseButton(button) {
 		score++;
 		reward = -rewardMagnitude;
 	}
+	console.log("score:", score);
 
 	training = true;
 	displayComputerCard(predictionIndex, possibleInputs);
