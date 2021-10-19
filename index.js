@@ -1,9 +1,9 @@
 let userMemory = [];
 let computerMemory = [];
-const memoryDepth = 10;
+const memoryDepth = 15;
 const possibleInputs = 2;
 const rewardMagnitude = 100;
-const epochs = 5;
+const epochs = 10;
 const confidenceThreshold = 0.1;
 let model;
 let score = 0;
@@ -129,9 +129,10 @@ function setupModel() {
 	model = tf.sequential({
 		layers: [
 			tf.layers.dense({ inputShape: [memoryDepth, possibleInputs * 2], units: possibleInputs * 4, activation: "relu" }),
-			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
-			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
-			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 15 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 30 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 30 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 15 * possibleInputs, activation: "relu" }),
 			tf.layers.flatten(),
 			tf.layers.dense({ units: possibleInputs, activation: "softmax" }),
 		],
