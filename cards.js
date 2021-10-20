@@ -3,6 +3,7 @@ const animationDuration = 1500;
 const playerCardDuration = 300;
 let animating = false;
 let disabled = false;
+let waitingThread;
 
 function clickCard(id) {
 	const buttonLookup = {
@@ -33,13 +34,14 @@ function displayComputerCard(index, possibleInputs) {
 
 		$(".flip-card").addClass("active-flipped");
 		animating = true;
-		setTimeout(startCardAnimation, cardDisplayDuration);
+		waitingThread = setTimeout(startCardAnimation, cardDisplayDuration);
 	} else {
 		console.log(`No display parameters set for ${possibleInputs} inputs`);
 	}
 }
 
 function startCardAnimation() {
+	waitingThread = undefined;
 	$(".flip-card").removeClass("active-flipped");
 	$(".computer-card").addClass("animated-card");
 	setTimeout(endCardAnimation, animationDuration);
@@ -79,3 +81,14 @@ function setupButtonActions() {
 		$(".player-card").not(e.currentTarget).addClass("unselected-card");
 	});
 }
+
+$("document").ready(() => {
+	$("body").click((e) => {
+		if (waitingThread && disabled && animating && !training) {
+			console.log("skipping");
+			clearTimeout(waitingThread);
+			waitingThread = undefined;
+			startCardAnimation();
+		}
+	});
+});

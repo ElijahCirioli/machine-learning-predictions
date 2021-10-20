@@ -5,7 +5,7 @@ body {
 	--red-color: #ba2b2b;
 	--blue-color: #2d3275;
 	--card-color: #f7f4e9;
-	--green-color: #54c936;
+	--green-color: #58d638;
 	margin: 0;
 	display: block;
 	font-family: "Roboto Mono", monospace;
@@ -183,6 +183,8 @@ body {
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	align-items: flex-start;
+	width: 100%;
+	gap: 20px;
 }
 .card-text {
 	position: absolute;
@@ -204,8 +206,8 @@ body {
 }
 #pyotr-info {
 	display: block;
-	margin-left: 20px;
 	width: 200px;
+	margin-top: -15px;
 }
 #pyotr-title {
 	color: var(--main-text-color);
