@@ -1,7 +1,6 @@
 const minCardDisplayDuration = 500;
-const maxCardDisplayDuration = 3000;
+const maxCardDisplayDuration = 2500;
 const animationDuration = 1500;
-const playerCardDuration = 300;
 let animating = false;
 let disabled = false;
 let waitingThread;
@@ -15,6 +14,7 @@ const outputDisplays = {
 
 let score = 0;
 let roundNumber = 0;
+let winStreak = 0;
 
 function clickCard(id) {
 	const buttonLookup = {
@@ -49,16 +49,13 @@ function startCardAnimation() {
 	$(".flip-card").removeClass("active-flipped");
 	$(".computer-card").addClass("animated-card");
 	setTimeout(endCardAnimation, animationDuration);
-	setTimeout(lowerPlayerCard, animationDuration - playerCardDuration);
 }
 
 function endCardAnimation() {
 	$(".computer-card").removeClass("animated-card");
 	animating = false;
-}
-
-function lowerPlayerCard() {
 	if (!training && disabled) {
+		console.log("enabled from end of animation");
 		enableButtons();
 	}
 }
@@ -98,6 +95,28 @@ function updatePreviousRoundDisplay(playerIndex, computerIndex) {
 	const params = outputDisplays[possibleInputs];
 	$("#previous-you-text").text(`You: ${params.outputs[playerIndex]}`);
 	$("#previous-computer-text").text(`Pyotr: ${params.outputs[computerIndex]}`);
+}
+
+function updateFacialExpression(correctPrediction) {
+	if (correctPrediction) {
+		winStreak = winStreak >= 0 ? winStreak + 1 : 0;
+	} else {
+		winStreak = winStreak <= 0 ? winStreak - 1 : 0;
+	}
+
+	let face = 4;
+	if (winStreak <= -5) {
+		face = 0;
+	} else if (winStreak <= -2) {
+		face = 1;
+	} else if (winStreak <= 2) {
+		face = 2;
+	} else if (winStreak <= 5) {
+		face = 3;
+	}
+
+	$(".pyotr-face").hide();
+	$(`#face-${face}`).show();
 }
 
 $("document").ready(() => {

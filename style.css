@@ -227,6 +227,7 @@ body {
 #pyotr {
 	width: 200px;
 	height: 140px;
+	position: relative;
 }
 .pyotr-face {
 	background: var(--green-color);
@@ -238,42 +239,30 @@ body {
 	-webkit-mask-position: 50% 0;
 	width: 100%;
 	height: 100%;
-	animation-name: faces;
-	animation-duration: 3s;
-	animation-iteration-count: infinite;
-	animation-direction: alternate;
-	animation-timing-function: steps(1, end);
+	display: none;
+	position: absolute;
+	top: 0;
 }
-@keyframes faces {
-	from {
-		mask-image: url("imgs/pyotr/pyotr4.svg");
-		-webkit-mask-image: url("imgs/pyotr/pyotr4.svg");
-	}
-
-	20% {
-		mask-image: url("imgs/pyotr/pyotr3.svg");
-		-webkit-mask-image: url("imgs/pyotr/pyotr3.svg");
-	}
-
-	40% {
-		mask-image: url("imgs/pyotr/pyotr2.svg");
-		-webkit-mask-image: url("imgs/pyotr/pyotr2.svg");
-	}
-
-	60% {
-		mask-image: url("imgs/pyotr/pyotr1.svg");
-		-webkit-mask-image: url("imgs/pyotr/pyotr1.svg");
-	}
-
-	80% {
-		mask-image: url("imgs/pyotr/pyotr0.svg");
-		-webkit-mask-image: url("imgs/pyotr/pyotr0.svg");
-	}
-
-	to {
-		mask-image: url("imgs/pyotr/pyotr4.svg");
-		-webkit-mask-image: url("imgs/pyotr/pyotr4.svg");
-	}
+#face-0 {
+	mask-image: url("imgs/pyotr/pyotr0.svg");
+	-webkit-mask-image: url("imgs/pyotr/pyotr0.svg");
+}
+#face-1 {
+	mask-image: url("imgs/pyotr/pyotr1.svg");
+	-webkit-mask-image: url("imgs/pyotr/pyotr1.svg");
+}
+#face-2 {
+	mask-image: url("imgs/pyotr/pyotr2.svg");
+	-webkit-mask-image: url("imgs/pyotr/pyotr2.svg");
+	display: block;
+}
+#face-3 {
+	mask-image: url("imgs/pyotr/pyotr3.svg");
+	-webkit-mask-image: url("imgs/pyotr/pyotr3.svg");
+}
+#face-4 {
+	mask-image: url("imgs/pyotr/pyotr4.svg");
+	-webkit-mask-image: url("imgs/pyotr/pyotr4.svg");
 }
 #score-wrap {
 	display: block;

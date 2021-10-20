@@ -2,7 +2,7 @@
 const memoryDepth = 15;
 const possibleInputs = 2;
 const rewardMagnitude = 100;
-const epochs = 1000;
+const epochs = 5;
 const confidenceThreshold = 0.1;
 
 // neural network variables
@@ -18,12 +18,13 @@ async function chooseButton(button) {
 
 	const predictionIndex = getPredictionIndex(prediction);
 	const buttonIndex = getButtonIndex(button);
+	const correctPrediction = predictionIndex === buttonIndex;
 
 	training = true;
 	displayComputerCard(predictionIndex);
 	updatePreviousRoundDisplay(buttonIndex, predictionIndex);
+	updateFacialExpression(correctPrediction);
 
-	const correctPrediction = predictionIndex === buttonIndex;
 	const reward = correctPrediction ? rewardMagnitude : -rewardMagnitude;
 	updateScore(correctPrediction ? -1 : 1);
 
