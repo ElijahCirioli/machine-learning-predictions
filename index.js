@@ -1,8 +1,7 @@
 // neural network constants
 const memoryDepth = 15;
 const possibleInputs = 2;
-const rewardMagnitude = 100;
-const epochs = 5;
+const epochs = 10;
 const confidenceThreshold = 0.1;
 
 // neural network variables
@@ -25,11 +24,10 @@ async function chooseButton(button) {
 	updatePreviousRoundDisplay(buttonIndex, predictionIndex);
 	updateFacialExpression(correctPrediction);
 
-	const reward = correctPrediction ? rewardMagnitude : -rewardMagnitude;
 	updateScore(correctPrediction ? -1 : 1);
 
 	let inputTensor = constructMemoryTensor();
-	await trainModel(inputTensor, prediction, predictionIndex, reward);
+	await trainModel(inputTensor, button);
 
 	// add to user memory
 	userMemory.unshift(button);
@@ -48,7 +46,6 @@ async function chooseButton(button) {
 
 	training = false;
 	if (!animating && disabled) {
-		console.log("enabling from training");
 		enableButtons();
 	}
 }
@@ -72,10 +69,12 @@ function getPredictionIndex(prediction) {
 			maxIndex = i;
 		}
 	}
+
 	const sortedPrediction = prediction.slice().sort().reverse();
 	// this absolute value isn't really necessary but let's be safe
 	const maxDiff = Math.abs(sortedPrediction[0] - sortedPrediction[1]);
 	if (maxDiff < confidenceThreshold) {
+		console.log("guessing");
 		return Math.floor(Math.random() * prediction.length);
 	}
 	return maxIndex;
@@ -98,16 +97,10 @@ function getComputerOneHot(index) {
 	return result;
 }
 
-async function trainModel(inputTensor, prediction, predictionIndex, reward) {
-	// backpropagate the prediction
-	for (let i = 0; i < possibleInputs; i++) {
-		if (i === predictionIndex) {
-			prediction[i] += reward;
-		}
-	}
+async function trainModel(inputTensor, button) {
+	const correctResult = tf.tensor2d(button, [1, possibleInputs]);
 
-	const updatedPredictionTensor = tf.tensor2d(prediction, [1, 2]);
-	await model.fit(inputTensor, updatedPredictionTensor, {
+	await model.fit(inputTensor, correctResult, {
 		batchSize: 1,
 		epochs,
 		shuffle: false,
@@ -126,11 +119,11 @@ async function setupModel() {
 	// Create a sequential model
 	model = tf.sequential({
 		layers: [
-			tf.layers.dense({ inputShape: [memoryDepth, possibleInputs * 2], units: possibleInputs * 4, activation: "relu" }),
-			tf.layers.dense({ units: 15 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ inputShape: [memoryDepth, possibleInputs * 2], units: possibleInputs * 10, activation: "relu" }),
+			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
 			tf.layers.dense({ units: 30 * possibleInputs, activation: "relu" }),
-			tf.layers.dense({ units: 30 * possibleInputs, activation: "relu" }),
-			tf.layers.dense({ units: 15 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
 			tf.layers.flatten(),
 			tf.layers.dense({ units: possibleInputs, activation: "softmax" }),
 		],
