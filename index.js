@@ -1,12 +1,14 @@
-let userMemory = [];
-let computerMemory = [];
+// neural network constants
 const memoryDepth = 15;
 const possibleInputs = 2;
 const rewardMagnitude = 100;
-const epochs = 10;
+const epochs = 1000;
 const confidenceThreshold = 0.1;
+
+// neural network variables
+let userMemory = [];
+let computerMemory = [];
 let model, prediction;
-let score = 0;
 let training = false;
 
 async function chooseButton(button) {
@@ -17,19 +19,13 @@ async function chooseButton(button) {
 	const predictionIndex = getPredictionIndex(prediction);
 	const buttonIndex = getButtonIndex(button);
 
-	let reward = 0;
-
-	if (predictionIndex === buttonIndex) {
-		score--;
-		reward = rewardMagnitude;
-	} else {
-		score++;
-		reward = -rewardMagnitude;
-	}
-	console.log("score:", score);
-
 	training = true;
-	displayComputerCard(predictionIndex, possibleInputs);
+	displayComputerCard(predictionIndex);
+	updatePreviousRoundDisplay(buttonIndex, predictionIndex);
+
+	const correctPrediction = predictionIndex === buttonIndex;
+	const reward = correctPrediction ? rewardMagnitude : -rewardMagnitude;
+	updateScore(correctPrediction ? -1 : 1);
 
 	let inputTensor = constructMemoryTensor();
 	await trainModel(inputTensor, prediction, predictionIndex, reward);
@@ -51,12 +47,9 @@ async function chooseButton(button) {
 
 	training = false;
 	if (!animating && disabled) {
+		console.log("enabling from training");
 		enableButtons();
 	}
-}
-
-function adjustScore() {
-	// TODO: move stuff in here
 }
 
 function constructMemoryTensor() {
@@ -157,4 +150,5 @@ async function setupModel() {
 
 $("document").ready(() => {
 	setupModel();
+	updateScore(0);
 });
