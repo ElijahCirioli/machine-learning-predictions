@@ -1,8 +1,10 @@
 const minCardDisplayDuration = 500;
 const maxCardDisplayDuration = 2500;
+const reducedCardDisplayDuration = 1000;
 const animationDuration = 1500;
 let animating = false;
 let disabled = false;
+let reducedAnimations = false;
 let waitingThread, eyeMoveThread, eyeReturnThread;
 
 const outputDisplays = {
@@ -62,15 +64,35 @@ function displayComputerCard(index) {
 	setTimeout(allowAnimationSkip, minCardDisplayDuration);
 }
 
+function displayPlayerCards() {
+	const lookup = {
+		2: ["#aCard", "#bCard"],
+		3: ["#rockCard", "#paperCard", "#scissorsCard"],
+	};
+	for (const n in lookup) {
+		for (const card of lookup[n]) {
+			$(card).hide();
+		}
+	}
+	for (const card of lookup[possibleInputs]) {
+		$(card).show();
+	}
+}
+
 function allowAnimationSkip() {
-	waitingThread = setTimeout(startCardAnimation, maxCardDisplayDuration - minCardDisplayDuration);
+	const waitDuration = reducedAnimations ? reducedCardDisplayDuration : maxCardDisplayDuration - minCardDisplayDuration;
+	waitingThread = setTimeout(startCardAnimation, waitDuration);
 }
 
 function startCardAnimation() {
 	waitingThread = undefined;
 	$(".flip-card").removeClass("active-flipped");
-	$(".computer-card").addClass("animated-card");
-	setTimeout(endCardAnimation, animationDuration);
+	if (reducedAnimations) {
+		endCardAnimation();
+	} else {
+		$(".computer-card").addClass("animated-card");
+		setTimeout(endCardAnimation, animationDuration);
+	}
 }
 
 function endCardAnimation() {
@@ -102,6 +124,30 @@ function setupButtonActions() {
 		$(e.currentTarget).addClass("selected-card");
 		$(".player-card").not(e.currentTarget).addClass("unselected-card");
 	});
+
+	$("#2-mode-button").click((e) => {
+		$(".mode-button").removeClass("active-mode");
+		$("#2-mode-button").addClass("active-mode");
+		setupGame(2);
+	});
+
+	$("#3-mode-button").click((e) => {
+		$(".mode-button").removeClass("active-mode");
+		$("#3-mode-button").addClass("active-mode");
+		setupGame(3);
+	});
+
+	$("#checkbox").click((e) => {
+		reducedAnimations = $("#checkbox").is(":checked");
+	});
+}
+
+function setupScore() {
+	roundNumber = 0;
+	score = 0;
+	updateScore(0);
+	$("#previous-you-text").text("");
+	$("#previous-computer-text").text("");
 }
 
 function updateScore(delta) {
@@ -165,8 +211,8 @@ function animateEyes() {
 
 $("document").ready(() => {
 	$("body").click((e) => {
-		animateEyes();
-		if (waitingThread && disabled && animating && !training) {
+		if (waitingThread && disabled && animating && !training && !reducedAnimations) {
+			console.log("skipping");
 			clearTimeout(waitingThread);
 			startCardAnimation();
 		}

@@ -18,6 +18,28 @@
 			<h1 id="header-title">Recurrent Neural Networks</h1>
 		</div>
 		<div id="content-wrap">
+			<div id="info-wrap">
+				<div id="settings-wrap">
+					<div class="settings-group">
+						<p class="settings-group-title">Game mode</p>
+						<div class="settings-group-items">
+							<button class="mode-button" id="2-mode-button">AB</button>
+							<button class="mode-button active-mode" id="3-mode-button">RPS</button>
+							<button class="mode-button" id="10-mode-button">0-9</button>
+						</div>
+					</div>
+					<div class="settings-group">
+						<p class="settings-group-title" id="reduce-animations-title">Reduced<br />animations</p>
+						<div class="settings-group-items">
+							<label class="switch">
+								<input id="checkbox" type="checkbox" />
+								<span class="slider"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+				<div id="graphs-wrap"></div>
+			</div>
 			<div id="cards-wrap">
 				<div id="computer-wrap">
 					<div id="score-wrap">
@@ -41,8 +63,8 @@
 					<div id="pyotr-info">
 						<div id="pyotr">
 							<div id="pyotr-eyes-wrap">
-								<span id="pyotr-left-eye" class="pyotr-eye"></span>
-								<span id="pyotr-right-eye" class="pyotr-eye"></span>
+								<span class="pyotr-eye"></span>
+								<span class="pyotr-eye"></span>
 							</div>
 							<div id="face-0" class="pyotr-face"></div>
 							<div id="face-1" class="pyotr-face"></div>

@@ -1,14 +1,12 @@
 // neural network constants
 const memoryDepth = 10;
-const possibleInputs = 3;
 const confidenceThreshold = 0.05;
 const epochs = 40;
 
 // neural network variables
 let userMemory = [];
 let computerMemory = [];
-let model, prediction;
-let training = false;
+let model, prediction, training, possibleInputs;
 
 async function chooseButton(button) {
 	if (!prediction) {
@@ -19,7 +17,10 @@ async function chooseButton(button) {
 	const buttonIndex = getButtonIndex(button);
 	const correctPrediction = predictionIndex === buttonIndex;
 
+	// indicate that training has begun
 	training = true;
+	$("#pyotr").addClass("shake");
+
 	displayComputerCard(predictionIndex);
 	updatePreviousRoundDisplay(buttonIndex, predictionIndex);
 	updateFacialExpression(correctPrediction);
@@ -55,6 +56,7 @@ async function chooseButton(button) {
 	prediction = prediction.dataSync();
 
 	training = false;
+	$("#pyotr").removeClass("shake");
 	if (!animating && disabled) {
 		enableButtons();
 	}
@@ -84,7 +86,6 @@ function getPredictionIndex(prediction) {
 	// this absolute value isn't really necessary but let's be safe
 	const maxDiff = Math.abs(sortedPrediction[0] - sortedPrediction[1]);
 	if (maxDiff < confidenceThreshold) {
-		console.log("guessing");
 		return Math.floor(Math.random() * prediction.length);
 	}
 	return maxIndex;
@@ -119,8 +120,7 @@ async function trainModel(inputTensor, button) {
 
 async function setupModel() {
 	disableButtons();
-
-	zeroMemory();
+	training = false;
 
 	// Create a sequential model
 	model = tf.sequential({
@@ -138,6 +138,7 @@ async function setupModel() {
 		loss: tf.losses.meanSquaredError,
 	});
 
+	zeroMemory();
 	const inputTensor = constructMemoryTensor();
 	prediction = await model.predict(inputTensor).dataSync();
 
@@ -159,7 +160,13 @@ function zeroMemory() {
 	}
 }
 
-$("document").ready(() => {
-	updateScore(0);
+function setupGame(mode) {
+	possibleInputs = mode;
+	displayPlayerCards();
+	setupScore();
 	setupModel();
+}
+
+$("document").ready(() => {
+	setupGame(3);
 });
