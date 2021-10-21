@@ -1,8 +1,8 @@
 // neural network constants
-const memoryDepth = 15;
+const memoryDepth = 10;
 const possibleInputs = 2;
-const epochs = 10;
 const confidenceThreshold = 0.1;
+const epochs = 40;
 
 // neural network variables
 let userMemory = [];
@@ -42,7 +42,9 @@ async function chooseButton(button) {
 	}
 
 	inputTensor = constructMemoryTensor();
-	prediction = await model.predict(inputTensor).dataSync();
+	prediction = await model.predict(inputTensor);
+	prediction.print();
+	prediction = prediction.dataSync();
 
 	training = false;
 	if (!animating && disabled) {
@@ -59,7 +61,7 @@ function constructMemoryTensor() {
 		}
 	}
 
-	return tf.tensor3d(combinedArray, [1, memoryDepth, possibleInputs * 2]);
+	return tf.tensor3d(combinedArray, [1, memoryDepth, possibleInputs * 2]).reverse([1, 0]);
 }
 
 function getPredictionIndex(prediction) {
@@ -108,6 +110,8 @@ async function trainModel(inputTensor, button) {
 }
 
 async function setupModel() {
+	disableButtons();
+
 	// fill the memory arrays with 0s
 	while (userMemory.length < memoryDepth) {
 		userMemory.push([0, 0]);
@@ -119,12 +123,10 @@ async function setupModel() {
 	// Create a sequential model
 	model = tf.sequential({
 		layers: [
-			tf.layers.dense({ inputShape: [memoryDepth, possibleInputs * 2], units: possibleInputs * 10, activation: "relu" }),
-			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
+			tf.layers.lstm({ inputShape: [memoryDepth, possibleInputs * 2], units: 2 * memoryDepth * possibleInputs, returnSequences: false }),
 			tf.layers.dense({ units: 30 * possibleInputs, activation: "relu" }),
 			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
 			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
-			tf.layers.flatten(),
 			tf.layers.dense({ units: possibleInputs, activation: "softmax" }),
 		],
 	});
@@ -132,7 +134,6 @@ async function setupModel() {
 	await model.compile({
 		optimizer: tf.train.adam(),
 		loss: tf.losses.meanSquaredError,
-		metrics: ["accuracy"],
 	});
 
 	const inputTensor = constructMemoryTensor();
@@ -143,6 +144,6 @@ async function setupModel() {
 }
 
 $("document").ready(() => {
-	setupModel();
 	updateScore(0);
+	setupModel();
 });

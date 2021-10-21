@@ -55,7 +55,6 @@ function endCardAnimation() {
 	$(".computer-card").removeClass("animated-card");
 	animating = false;
 	if (!training && disabled) {
-		console.log("enabled from end of animation");
 		enableButtons();
 	}
 }
