@@ -7,8 +7,16 @@ let waitingThread;
 
 const outputDisplays = {
 	2: {
+		inputs: ["A", "B"],
 		outputs: ["A", "B"],
 		classes: ["red-text", "blue-text"],
+		images: false,
+	},
+	3: {
+		inputs: ["Scissors", "Rock", "Paper"],
+		outputs: ["Rock", "Paper", "Scissors"],
+		classes: ["rock-image", "paper-image", "scissors-image"],
+		images: true,
 	},
 };
 
@@ -20,6 +28,9 @@ function clickCard(id) {
 	const buttonLookup = {
 		aCard: [1, 0],
 		bCard: [0, 1],
+		rockCard: [0, 1, 0],
+		paperCard: [0, 0, 1],
+		scissorsCard: [1, 0, 0],
 	};
 	disableButtons();
 	if (id in buttonLookup) {
@@ -29,11 +40,22 @@ function clickCard(id) {
 
 function displayComputerCard(index) {
 	const params = outputDisplays[possibleInputs];
-	$("#computer-card-text").text(params.outputs[index]);
-	for (const c in params.classes) {
-		$("#computer-card-text").removeClass(params.classes[c]);
+	if (params.images) {
+		for (const c in params.classes) {
+			$("#computer-card-image").removeClass(params.classes[c]);
+		}
+		$("#computer-card-image").addClass(params.classes[index]);
+		$("#computer-card-image").show();
+		$("#computer-card-text").hide();
+	} else {
+		$("#computer-card-text").text(params.outputs[index]);
+		for (const c in params.classes) {
+			$("#computer-card-text").removeClass(params.classes[c]);
+		}
+		$("#computer-card-text").addClass(params.classes[index]);
+		$("#computer-card-image").hide();
+		$("#computer-card-text").show();
 	}
-	$("#computer-card-text").addClass(params.classes[index]);
 
 	$(".flip-card").addClass("active-flipped");
 	animating = true;
@@ -92,25 +114,25 @@ function updateScore(delta) {
 
 function updatePreviousRoundDisplay(playerIndex, computerIndex) {
 	const params = outputDisplays[possibleInputs];
-	$("#previous-you-text").text(`You: ${params.outputs[playerIndex]}`);
+	$("#previous-you-text").text(`You: ${params.inputs[playerIndex]}`);
 	$("#previous-computer-text").text(`Pyotr: ${params.outputs[computerIndex]}`);
 }
 
 function updateFacialExpression(correctPrediction) {
 	if (correctPrediction) {
-		winStreak = winStreak >= 0 ? winStreak + 1 : 0;
+		winStreak = winStreak >= 0 ? winStreak + 1 : -1;
 	} else {
-		winStreak = winStreak <= 0 ? winStreak - 1 : 0;
+		winStreak = winStreak <= 0 ? winStreak - 1 : 1;
 	}
 
 	let face = 4;
-	if (winStreak <= -5) {
+	if (winStreak <= -6) {
 		face = 0;
-	} else if (winStreak <= -2) {
+	} else if (winStreak <= -3) {
 		face = 1;
-	} else if (winStreak <= 2) {
+	} else if (winStreak <= 3) {
 		face = 2;
-	} else if (winStreak <= 5) {
+	} else if (winStreak <= 6) {
 		face = 3;
 	}
 

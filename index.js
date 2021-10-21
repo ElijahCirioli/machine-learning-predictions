@@ -1,7 +1,7 @@
 // neural network constants
 const memoryDepth = 10;
-const possibleInputs = 2;
-const confidenceThreshold = 0.1;
+const possibleInputs = 3;
+const confidenceThreshold = 0.05;
 const epochs = 40;
 
 // neural network variables
@@ -24,7 +24,15 @@ async function chooseButton(button) {
 	updatePreviousRoundDisplay(buttonIndex, predictionIndex);
 	updateFacialExpression(correctPrediction);
 
-	updateScore(correctPrediction ? -1 : 1);
+	if (possibleInputs === 3) {
+		if (correctPrediction) {
+			updateScore(-1);
+		} else {
+			updateScore((buttonIndex + 1) % 3 === predictionIndex ? 1 : 0);
+		}
+	} else {
+		updateScore(correctPrediction ? -1 : 1);
+	}
 
 	let inputTensor = constructMemoryTensor();
 	await trainModel(inputTensor, button);
@@ -112,19 +120,13 @@ async function trainModel(inputTensor, button) {
 async function setupModel() {
 	disableButtons();
 
-	// fill the memory arrays with 0s
-	while (userMemory.length < memoryDepth) {
-		userMemory.push([0, 0]);
-	}
-	while (computerMemory.length < memoryDepth) {
-		computerMemory.push([0, 0]);
-	}
+	zeroMemory();
 
 	// Create a sequential model
 	model = tf.sequential({
 		layers: [
 			tf.layers.lstm({ inputShape: [memoryDepth, possibleInputs * 2], units: 2 * memoryDepth * possibleInputs, returnSequences: false }),
-			tf.layers.dense({ units: 30 * possibleInputs, activation: "relu" }),
+			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
 			tf.layers.dense({ units: 20 * possibleInputs, activation: "relu" }),
 			tf.layers.dense({ units: 10 * possibleInputs, activation: "relu" }),
 			tf.layers.dense({ units: possibleInputs, activation: "softmax" }),
@@ -141,6 +143,20 @@ async function setupModel() {
 
 	enableButtons();
 	setupButtonActions();
+}
+
+function zeroMemory() {
+	zeroRound = [];
+	for (let i = 0; i < possibleInputs; i++) {
+		zeroRound.push(0);
+	}
+	// fill the memory arrays with 0s
+	while (userMemory.length < memoryDepth) {
+		userMemory.push(zeroRound);
+	}
+	while (computerMemory.length < memoryDepth) {
+		computerMemory.push(zeroRound);
+	}
 }
 
 $("document").ready(() => {

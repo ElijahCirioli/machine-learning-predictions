@@ -4,6 +4,8 @@ body {
 	--secondary-text-color: #e3e3e3;
 	--red-color: #ba2b2b;
 	--blue-color: #2d3275;
+	--dark-green-color: #3b692d;
+	--orange-color: #c4781b;
 	--card-color: #f7f4e9;
 	--green-color: #58d638;
 	margin: 0;
@@ -122,6 +124,17 @@ body {
 	margin: auto;
 	perspective: 1000px;
 	background-color: transparent;
+	position: relative;
+}
+#computer-card-text {
+	position: absolute;
+	top: 0;
+	margin: 0;
+}
+#computer-card-image {
+	position: absolute;
+	top: 0;
+	margin: 0;
 }
 @keyframes remove-card {
 	from {
@@ -144,11 +157,30 @@ body {
 		opacity: 1;
 	}
 }
-.computer-card .card-image {
+#card-back-image {
 	mask-image: url("imgs/card-back.svg");
 	-webkit-mask-image: url("imgs/card-back.svg");
 	background: var(--blue-color);
 	background: linear-gradient(160deg, var(--blue-color) 0%, #37478c 100%);
+}
+.rock-image {
+	mask-image: url("imgs/rps/rock.svg");
+	-webkit-mask-image: url("imgs/rps/rock.svg");
+	background: var(--blue-color);
+	mask-size: 110% auto;
+	mask-position: 50% 50%;
+	-webkit-mask-size: 110% auto;
+	-webkit-mask-position: 50% 50%;
+}
+.paper-image {
+	mask-image: url("imgs/rps/paper.svg");
+	-webkit-mask-image: url("imgs/rps/paper.svg");
+	background: var(--dark-green-color);
+}
+.scissors-image {
+	mask-image: url("imgs/rps/scissors.svg");
+	-webkit-mask-image: url("imgs/rps/scissors.svg");
+	background: var(--red-color);
 }
 .card-front {
 	position: absolute;
@@ -178,7 +210,7 @@ body {
 	justify-content: center;
 	align-items: flex-end;
 	width: 100%;
-	gap: 40px;
+	gap: 25px;
 }
 #computer-wrap {
 	margin: 0 auto;
