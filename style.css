@@ -130,11 +130,13 @@ body {
 	position: absolute;
 	top: 0;
 	margin: 0;
+	z-index: 3;
 }
 #computer-card-image {
 	position: absolute;
 	top: 0;
 	margin: 0;
+	z-index: 3;
 }
 @keyframes remove-card {
 	from {
@@ -162,25 +164,38 @@ body {
 	-webkit-mask-image: url("imgs/card-back.svg");
 	background: var(--blue-color);
 	background: linear-gradient(160deg, var(--blue-color) 0%, #37478c 100%);
+	z-index: 2;
 }
 .rock-image {
-	mask-image: url("imgs/rps/rock.svg");
-	-webkit-mask-image: url("imgs/rps/rock.svg");
+	mask-image: url("imgs/rps/hand-back-fist-solid.svg");
+	-webkit-mask-image: url("imgs/rps/hand-back-fist-solid.svg");
 	background: var(--blue-color);
-	mask-size: 110% auto;
+	mask-size: 55% auto;
+	-webkit-mask-size: 55% auto;
 	mask-position: 50% 50%;
-	-webkit-mask-size: 110% auto;
 	-webkit-mask-position: 50% 50%;
+	transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
 }
 .paper-image {
-	mask-image: url("imgs/rps/paper.svg");
-	-webkit-mask-image: url("imgs/rps/paper.svg");
+	mask-image: url("imgs/rps/hand-solid.svg");
+	-webkit-mask-image: url("imgs/rps/hand-solid.svg");
 	background: var(--dark-green-color);
+	mask-size: 60% auto;
+	-webkit-mask-size: 60% auto;
+	mask-position: 50% 50%;
+	-webkit-mask-position: 50% 50%;
 }
 .scissors-image {
-	mask-image: url("imgs/rps/scissors.svg");
-	-webkit-mask-image: url("imgs/rps/scissors.svg");
+	mask-image: url("imgs/rps/hand-scissors-solid.svg");
+	-webkit-mask-image: url("imgs/rps/hand-scissors-solid.svg");
 	background: var(--red-color);
+	mask-size: 60% auto;
+	-webkit-mask-size: 60% auto;
+	mask-position: 50% 50%;
+	-webkit-mask-position: 50% 50%;
 }
 .card-front {
 	position: absolute;
@@ -316,4 +331,29 @@ body {
 	color: var(--secondary-text-color);
 	font-size: 16px;
 	margin: 0;
+}
+#pyotr-eyes-wrap {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	position: absolute;
+	width: 74px;
+	left: 63px;
+	top: 70px;
+	justify-content: space-between;
+	z-index: 10;
+	transition: transform 0.2s;
+}
+.pyotr-eye {
+	margin: 0;
+	background: black;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: none;
+	outline: none;
+}
+#pyotr-left-eye {
+}
+#pyotr-right-eye {
 }

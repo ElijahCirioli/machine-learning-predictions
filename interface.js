@@ -3,7 +3,7 @@ const maxCardDisplayDuration = 2500;
 const animationDuration = 1500;
 let animating = false;
 let disabled = false;
-let waitingThread;
+let waitingThread, eyeMoveThread, eyeReturnThread;
 
 const outputDisplays = {
 	2: {
@@ -120,19 +120,19 @@ function updatePreviousRoundDisplay(playerIndex, computerIndex) {
 
 function updateFacialExpression(correctPrediction) {
 	if (correctPrediction) {
-		winStreak = winStreak >= 0 ? winStreak + 1 : -1;
+		winStreak = winStreak >= 0 ? winStreak + 1 : 0;
 	} else {
-		winStreak = winStreak <= 0 ? winStreak - 1 : 1;
+		winStreak = winStreak <= 0 ? winStreak - 1 : 0;
 	}
 
 	let face = 4;
-	if (winStreak <= -6) {
+	if (winStreak <= -5) {
 		face = 0;
-	} else if (winStreak <= -3) {
+	} else if (winStreak <= -2) {
 		face = 1;
-	} else if (winStreak <= 3) {
+	} else if (winStreak <= 2) {
 		face = 2;
-	} else if (winStreak <= 6) {
+	} else if (winStreak <= 5) {
 		face = 3;
 	}
 
@@ -140,12 +140,38 @@ function updateFacialExpression(correctPrediction) {
 	$(`#face-${face}`).show();
 }
 
+function animateEyes() {
+	const eyeHoldTime = 1500;
+	const maxTimeToNextAnimation = 10000;
+	const minTimeToNextAnimation = 1000;
+
+	const maxOffsetX = 9;
+	const maxOffsetY = 9;
+	const offsetX = Math.floor(Math.random() * (2 * maxOffsetX + 1)) - maxOffsetX;
+	const offsetY = Math.floor(Math.random() * (2 * maxOffsetY + 1)) - maxOffsetY;
+
+	// I originally did this with jquery .animate() but the performance wasn't great
+	$("#pyotr-eyes-wrap").css("transform", `translate(${offsetX}px, ${offsetY}px)`);
+
+	clearTimeout(eyeReturnThread);
+	eyeReturnThread = setTimeout(() => {
+		$("#pyotr-eyes-wrap").css("transform", "translate(0, 0)");
+
+		const timeToNextAnimation = Math.floor(Math.random() * (maxTimeToNextAnimation - minTimeToNextAnimation)) + minTimeToNextAnimation;
+		clearTimeout(eyeMoveThread);
+		eyeMoveThread = setTimeout(animateEyes, timeToNextAnimation);
+	}, eyeHoldTime);
+}
+
 $("document").ready(() => {
 	$("body").click((e) => {
+		animateEyes();
 		if (waitingThread && disabled && animating && !training) {
-			console.log("skipping");
 			clearTimeout(waitingThread);
 			startCardAnimation();
 		}
 	});
+
+	// start eye animation cycle
+	eyeMoveThread = setTimeout(animateEyes, 5000);
 });
