@@ -23,17 +23,18 @@
 					<div id="score-wrap">
 						<h2 id="score-text">0</h2>
 						<p class="small-text" id="round-text">Round 1</p>
-						<p class="small-text" id="previous-you-text"></p>
 						<p class="small-text" id="previous-computer-text"></p>
+						<p class="small-text" id="previous-you-text"></p>
 					</div>
 					<div class="card computer-card">
 						<div class="flip-card">
 							<div class="card-sizer"></div>
 							<div class="card-front">
-								<div class="card-image"></div>
+								<div id="card-back-image" class="card-image"></div>
 							</div>
 							<div class="card-back">
 								<p class="card-text" id="computer-card-text"></p>
+								<p class="card-image" id="computer-card-image"></p>
 							</div>
 						</div>
 					</div>
@@ -50,13 +51,25 @@
 					</div>
 				</div>
 				<div id="player-hand">
-					<div id="aCard" class="card player-card unselected-card">
+					<div id="aCard" class="card player-card unselected-card 2-card" hidden>
 						<div class="card-sizer"></div>
 						<p class="card-text red-text">A</p>
 					</div>
-					<div id="bCard" class="card player-card unselected-card">
+					<div id="bCard" class="card player-card unselected-card 2-card" hidden>
 						<div class="card-sizer"></div>
 						<p class="card-text blue-text">B</p>
+					</div>
+					<div id="rockCard" class="card player-card unselected-card 3-card">
+						<div class="card-sizer"></div>
+						<div class="card-image rock-image"></div>
+					</div>
+					<div id="paperCard" class="card player-card unselected-card 3-card">
+						<div class="card-sizer"></div>
+						<div class="card-image paper-image"></div>
+					</div>
+					<div id="scissorsCard" class="card player-card unselected-card 3-card">
+						<div class="card-sizer"></div>
+						<div class="card-image scissors-image"></div>
 					</div>
 				</div>
 			</div>
