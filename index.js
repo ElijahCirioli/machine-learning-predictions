@@ -34,6 +34,7 @@ async function chooseButton(button) {
 	} else {
 		updateScore(correctPrediction ? -1 : 1);
 	}
+	updateGraphs();
 
 	let inputTensor = constructMemoryTensor();
 	await trainModel(inputTensor, button);
@@ -51,9 +52,9 @@ async function chooseButton(button) {
 	}
 
 	inputTensor = constructMemoryTensor();
-	prediction = await model.predict(inputTensor);
-	prediction.print();
-	prediction = prediction.dataSync();
+	predictionTensor = await model.predict(inputTensor);
+	predictionTensor.print();
+	prediction = predictionTensor.dataSync();
 
 	training = false;
 	$("#pyotr").removeClass("shake");
@@ -147,6 +148,9 @@ async function setupModel() {
 }
 
 function zeroMemory() {
+	userMemory = [];
+	computerMemory = [];
+
 	zeroRound = [];
 	for (let i = 0; i < possibleInputs; i++) {
 		zeroRound.push(0);
@@ -164,6 +168,7 @@ function setupGame(mode) {
 	possibleInputs = mode;
 	displayPlayerCards();
 	setupScore();
+	scoreGraph = new ScoreTimeGraph();
 	setupModel();
 }
 
