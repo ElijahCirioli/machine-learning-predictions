@@ -1,20 +1,21 @@
-let scoreGraph;
+let scoreGraph, confidenceGraph, accuracyGraph;
 
 class Graph {
 	constructor(id, title, labelY) {
 		this.id = id;
 		this.title = title;
-		this.width = 350;
+		this.width = 380;
 		this.height = 200;
-		this.offsetX = 25;
-		this.offsetY = 0;
+		this.offsetX = 40;
+		this.offsetY = 5;
 		this.minY = 0;
 		this.maxY = 0;
 		this.baselineY = 0;
 		this.labelX = "Time";
 		this.labelY = labelY;
-		this.values = [0];
+		this.values = [];
 		this.lineColor = "#58d638";
+		this.drawLabels = false;
 		this.createElement();
 		this.addAxisLabels();
 		this.canvas = $(`#${this.id}`).children("canvas");
@@ -46,22 +47,48 @@ class Graph {
 
 	draw() {
 		this.context.clearRect(0, 0, this.width, this.height);
-		this.drawAxisX();
-		this.drawAxisY();
 		if (this.baselineY !== undefined) {
 			this.drawBaselineY();
 		}
 		if (this.values.length > 0) {
 			this.plotValues();
 		}
+		this.drawAxisX();
+		this.drawAxisY();
+		if (this.drawLabels) {
+			this.drawAllLabels();
+		}
+	}
+
+	drawAllLabels() {
+		console.log("drawing labels");
+		this.context.fillStyle = "#e3e3e3";
+		this.context.font = "12px 'Roboto Mono', monospace";
+		this.context.textAlign = "right";
+		this.context.fillText(this.getLabelText(this.maxY), this.offsetX - 6, this.getScaledY(this.maxY) + 10);
+		this.context.fillText(this.getLabelText(this.minY), this.offsetX - 6, this.getScaledY(this.minY) - 3);
+		if (this.baselineY !== undefined) {
+			this.context.fillText(this.getLabelText(this.baselineY), this.offsetX - 6, this.getScaledY(this.baselineY) + 4);
+		}
+		this.context.textAlign = "left";
+		const mostRecentVal = this.values[this.values.length - 1];
+		let mostRecentScaled = this.getScaledY(mostRecentVal) + 4;
+		if (mostRecentScaled > this.height - 5) {
+			mostRecentScaled = this.height - 5;
+		}
+		this.context.fillText(this.getLabelText(mostRecentVal), this.width - this.offsetX + 5, mostRecentScaled);
+	}
+
+	getLabelText(val) {
+		return val + "";
 	}
 
 	drawAxisX() {
 		this.context.strokeStyle = "white";
 		this.context.lineWidth = 2;
 		this.context.beginPath();
-		this.context.moveTo(this.offsetX, this.height - this.offsetY);
-		this.context.lineTo(this.width - this.offsetX, this.height - this.offsetY);
+		this.context.moveTo(this.offsetX, this.height - 1);
+		this.context.lineTo(this.width - this.offsetX, this.height - 1);
 		this.context.stroke();
 	}
 
@@ -69,8 +96,8 @@ class Graph {
 		this.context.strokeStyle = "white";
 		this.context.lineWidth = 2;
 		this.context.beginPath();
-		this.context.moveTo(this.offsetX, 0);
-		this.context.lineTo(this.offsetX, this.height - this.offsetY);
+		this.context.moveTo(this.offsetX, this.offsetY);
+		this.context.lineTo(this.offsetX, this.height);
 		this.context.stroke();
 	}
 
@@ -88,7 +115,7 @@ class Graph {
 
 	plotValues() {
 		this.context.strokeStyle = this.lineColor;
-		this.context.lineWidth = 2;
+		this.context.lineWidth = 3;
 		this.context.beginPath();
 		this.context.moveTo(this.getScaledX(0), this.getScaledY(0));
 		for (let x = 0; x < this.values.length; x++) {
@@ -111,6 +138,8 @@ class ScoreTimeGraph extends Graph {
 		this.baselineY = 0;
 		this.minY = -2;
 		this.maxY = 2;
+		this.drawLabels = true;
+		this.values.push(0);
 		this.draw();
 	}
 
@@ -127,6 +156,42 @@ class ScoreTimeGraph extends Graph {
 	}
 }
 
-function updateGraphs() {
+class ConfidenceTimeGraph extends Graph {
+	constructor() {
+		super("confidence-time-graph", "Confidence vs Time", "Confidence");
+		this.baselineY = undefined;
+		this.minY = 0;
+		this.maxY = 1;
+		this.drawLabels = true;
+		this.draw();
+	}
+
+	getLabelText(value) {
+		return Math.round(100 * value) + "%";
+	}
+}
+
+class AccuracyTimeGraph extends Graph {
+	constructor() {
+		super("accuracy-time-graph", "Total Accuracy vs Time", "Accuracy");
+		this.baselineY = undefined;
+		this.minY = 0;
+		this.maxY = 1;
+		this.drawLabels = true;
+		this.draw();
+	}
+
+	getLabelText(value) {
+		return Math.round(100 * value) + "%";
+	}
+}
+
+function updateGraphs(confidence, correct) {
 	scoreGraph.addValue(score);
+	confidenceGraph.addValue(confidence);
+	if (correct) {
+		numCorrect++;
+	}
+	console.log(numCorrect / (roundNumber - 1));
+	accuracyGraph.addValue(numCorrect / (roundNumber - 1));
 }

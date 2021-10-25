@@ -25,6 +25,7 @@ const outputDisplays = {
 let score = 0;
 let roundNumber = 0;
 let winStreak = 0;
+let numCorrect = 0;
 
 function clickCard(id) {
 	const buttonLookup = {
@@ -145,6 +146,8 @@ function setupButtonActions() {
 function setupScore() {
 	roundNumber = 0;
 	score = 0;
+	winStreak = 0;
+	numCorrect = 0;
 	updateScore(0);
 	$("#previous-you-text").text("");
 	$("#previous-computer-text").text("");

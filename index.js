@@ -1,7 +1,7 @@
 // neural network constants
 const memoryDepth = 10;
 const confidenceThreshold = 0.05;
-const epochs = 40;
+const epochs = 30;
 
 // neural network variables
 let userMemory = [];
@@ -34,7 +34,7 @@ async function chooseButton(button) {
 	} else {
 		updateScore(correctPrediction ? -1 : 1);
 	}
-	updateGraphs();
+	updateGraphs(prediction[predictionIndex], correctPrediction);
 
 	let inputTensor = constructMemoryTensor();
 	await trainModel(inputTensor, button);
@@ -169,6 +169,8 @@ function setupGame(mode) {
 	displayPlayerCards();
 	setupScore();
 	scoreGraph = new ScoreTimeGraph();
+	confidenceGraph = new ConfidenceTimeGraph();
+	accuracyGraph = new AccuracyTimeGraph();
 	setupModel();
 }
 
