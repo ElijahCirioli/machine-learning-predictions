@@ -20,6 +20,12 @@ const outputDisplays = {
 		classes: ["rock-image", "paper-image", "scissors-image"],
 		images: true,
 	},
+	10: {
+		inputs: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+		outputs: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+		classes: ["red-text", "blue-text", "red-text", "blue-text", "red-text", "blue-text", "red-text", "blue-text", "red-text", "blue-text"],
+		images: false,
+	},
 };
 
 let score = 0;
@@ -35,6 +41,14 @@ function clickCard(id) {
 		paperCard: [0, 0, 1],
 		scissorsCard: [1, 0, 0],
 	};
+	for (let i = 0; i < 10; i++) {
+		const cardName = i + "Card";
+		buttonLookup[cardName] = [];
+		for (let j = 0; j < 10; j++) {
+			buttonLookup[cardName].push(i === j ? 1 : 0);
+		}
+	}
+
 	disableButtons();
 	if (id in buttonLookup) {
 		chooseButton(buttonLookup[id]);
@@ -66,18 +80,13 @@ function displayComputerCard(index) {
 }
 
 function displayPlayerCards() {
-	const lookup = {
-		2: ["#aCard", "#bCard"],
-		3: ["#rockCard", "#paperCard", "#scissorsCard"],
-	};
-	for (const n in lookup) {
-		for (const card of lookup[n]) {
-			$(card).hide();
-		}
+	const allPossibleInputs = ["two", "three", "ten"];
+	const classLookup = { 2: "two", 3: "three", 10: "ten" };
+
+	for (const n of allPossibleInputs) {
+		$(`.${n}-card`).hide();
 	}
-	for (const card of lookup[possibleInputs]) {
-		$(card).show();
-	}
+	$(`.${classLookup[possibleInputs]}-card`).show();
 }
 
 function allowAnimationSkip() {
@@ -136,6 +145,12 @@ function setupButtonActions() {
 		$(".mode-button").removeClass("active-mode");
 		$("#3-mode-button").addClass("active-mode");
 		setupGame(3);
+	});
+
+	$("#10-mode-button").click((e) => {
+		$(".mode-button").removeClass("active-mode");
+		$("#10-mode-button").addClass("active-mode");
+		setupGame(10);
 	});
 
 	$("#checkbox").click((e) => {

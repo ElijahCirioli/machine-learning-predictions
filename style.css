@@ -6,9 +6,10 @@ body {
 	--blue-color: #2d3275;
 	--dark-green-color: #3b692d;
 	--dark-gray-color: #4d4d4d;
-	--orange-color: #c4781b;
+	--orange-color: #d6872d;
 	--card-color: #f7f4e9;
 	--green-color: #58d638;
+	--purple-color: #65167a;
 	margin: 0;
 	display: block;
 	font-family: "Roboto Mono", monospace;
@@ -30,6 +31,7 @@ body {
 	flex-direction: row;
 	flex-wrap: nowrap;
 	justify-content: space-evenly;
+	margin-bottom: 50px;
 }
 #cards-wrap {
 	margin: 0;
@@ -38,7 +40,7 @@ body {
 	flex-direction: column;
 	flex-wrap: nowrap;
 	justify-content: flex-start;
-	gap: 100px;
+	gap: 30px;
 	min-height: calc(100vh - 150px);
 }
 #logo-image {
@@ -62,8 +64,7 @@ body {
 	border: none;
 	border-radius: 15px;
 	outline: none;
-	max-width: 60%;
-	min-width: 160px;
+	width: 160px;
 	position: relative;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -218,6 +219,11 @@ body {
 	backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
 }
+#player-hand-wrap {
+	max-width: calc(100vw - 600px);
+	overflow-x: auto;
+	overflow-y: hidden;
+}
 #player-hand {
 	display: flex;
 	flex-direction: row;
@@ -225,8 +231,10 @@ body {
 	margin: 0 auto;
 	justify-content: center;
 	align-items: flex-end;
-	width: 100%;
 	gap: 25px;
+	padding-top: 70px;
+	padding-bottom: 10px;
+	width: fit-content;
 }
 #computer-wrap {
 	margin: 0 auto;
@@ -255,6 +263,15 @@ body {
 }
 .blue-text {
 	color: var(--blue-color);
+}
+.green-text {
+	color: var(--dark-green-color);
+}
+.orange-text {
+	color: var(--orange-color);
+}
+.purple-text {
+	color: var(--purple-color);
 }
 #pyotr-info {
 	display: block;
@@ -535,4 +552,12 @@ input:checked + .slider:before {
 	position: absolute;
 	top: 115px;
 	left: -70px;
+}
+.ten-card {
+	width: 100px;
+	border-radius: 10px;
+}
+.ten-card .card-text {
+	top: 22px;
+	font-size: 70px;
 }

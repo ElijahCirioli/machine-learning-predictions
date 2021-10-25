@@ -36,6 +36,8 @@ async function chooseButton(button) {
 	}
 	updateGraphs(prediction[predictionIndex], correctPrediction);
 
+	tf.engine().startScope();
+
 	let inputTensor = constructMemoryTensor();
 	await trainModel(inputTensor, button);
 
@@ -61,6 +63,8 @@ async function chooseButton(button) {
 	if (!animating && disabled) {
 		enableButtons();
 	}
+
+	tf.engine().endScope();
 }
 
 function constructMemoryTensor() {
@@ -122,6 +126,7 @@ async function trainModel(inputTensor, button) {
 async function setupModel() {
 	disableButtons();
 	training = false;
+	tf.engine().startScope();
 
 	// Create a sequential model
 	model = tf.sequential({
@@ -143,6 +148,7 @@ async function setupModel() {
 	const inputTensor = constructMemoryTensor();
 	prediction = await model.predict(inputTensor).dataSync();
 
+	tf.engine().endScope();
 	enableButtons();
 	setupButtonActions();
 }
@@ -171,6 +177,10 @@ function setupGame(mode) {
 	scoreGraph = new ScoreTimeGraph();
 	confidenceGraph = new ConfidenceTimeGraph();
 	accuracyGraph = new AccuracyTimeGraph();
+	if (model) {
+		tf.dispose(model);
+		tf.disposeVariables();
+	}
 	setupModel();
 }
 

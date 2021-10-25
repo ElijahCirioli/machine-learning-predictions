@@ -61,7 +61,6 @@ class Graph {
 	}
 
 	drawAllLabels() {
-		console.log("drawing labels");
 		this.context.fillStyle = "#e3e3e3";
 		this.context.font = "12px 'Roboto Mono', monospace";
 		this.context.textAlign = "right";
@@ -192,6 +191,5 @@ function updateGraphs(confidence, correct) {
 	if (correct) {
 		numCorrect++;
 	}
-	console.log(numCorrect / (roundNumber - 1));
 	accuracyGraph.addValue(numCorrect / (roundNumber - 1));
 }
