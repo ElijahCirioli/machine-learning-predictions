@@ -23,7 +23,18 @@ const outputDisplays = {
 	10: {
 		inputs: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
 		outputs: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
-		classes: ["red-text", "blue-text", "red-text", "blue-text", "red-text", "blue-text", "red-text", "blue-text", "red-text", "blue-text"],
+		classes: [
+			"red-text",
+			"blue-text",
+			"green-text",
+			"orange-text",
+			"purple-text",
+			"red-text",
+			"blue-text",
+			"green-text",
+			"orange-text",
+			"purple-text",
+		],
 		images: false,
 	},
 };
@@ -136,21 +147,27 @@ function setupButtonActions() {
 	});
 
 	$("#2-mode-button").click((e) => {
-		$(".mode-button").removeClass("active-mode");
-		$("#2-mode-button").addClass("active-mode");
-		setupGame(2);
+		if (!disabled) {
+			$(".mode-button").removeClass("active-mode");
+			$("#2-mode-button").addClass("active-mode");
+			setupGame(2);
+		}
 	});
 
 	$("#3-mode-button").click((e) => {
-		$(".mode-button").removeClass("active-mode");
-		$("#3-mode-button").addClass("active-mode");
-		setupGame(3);
+		if (!disabled) {
+			$(".mode-button").removeClass("active-mode");
+			$("#3-mode-button").addClass("active-mode");
+			setupGame(3);
+		}
 	});
 
 	$("#10-mode-button").click((e) => {
-		$(".mode-button").removeClass("active-mode");
-		$("#10-mode-button").addClass("active-mode");
-		setupGame(10);
+		if (!disabled) {
+			$(".mode-button").removeClass("active-mode");
+			$("#10-mode-button").addClass("active-mode");
+			setupGame(10);
+		}
 	});
 
 	$("#checkbox").click((e) => {
@@ -209,8 +226,9 @@ function animateEyes() {
 	const maxTimeToNextAnimation = 10000;
 	const minTimeToNextAnimation = 1000;
 
-	const maxOffsetX = 9;
-	const maxOffsetY = 9;
+	const width = $("#pyotr").width();
+	const maxOffsetX = (9 * width) / 200;
+	const maxOffsetY = (9 * width) / 200;
 	const offsetX = Math.floor(Math.random() * (2 * maxOffsetX + 1)) - maxOffsetX;
 	const offsetY = Math.floor(Math.random() * (2 * maxOffsetY + 1)) - maxOffsetY;
 
@@ -230,7 +248,6 @@ function animateEyes() {
 $("document").ready(() => {
 	$("body").click((e) => {
 		if (waitingThread && disabled && animating && !training && !reducedAnimations) {
-			console.log("skipping");
 			clearTimeout(waitingThread);
 			startCardAnimation();
 		}

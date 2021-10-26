@@ -11,6 +11,7 @@ body {
 	--green-color: #58d638;
 	--purple-color: #65167a;
 	margin: 0;
+	padding: 0;
 	display: block;
 	font-family: "Roboto Mono", monospace;
 	color: var(--main-text-color);
@@ -21,7 +22,8 @@ body {
 	padding: 10px 20px;
 	flex-direction: row;
 	flex-wrap: nowrap;
-	justify-content: left;
+	justify-content: flex-start;
+	align-items: flex-start;
 	z-index: 2;
 }
 #content-wrap {
@@ -40,12 +42,13 @@ body {
 	flex-direction: column;
 	flex-wrap: nowrap;
 	justify-content: flex-start;
+	align-items: center;
 	gap: 30px;
 	min-height: calc(100vh - 150px);
 }
 #logo-image {
-	height: 100%;
-	width: auto;
+	height: auto;
+	width: 100%;
 }
 #logo-link {
 	width: 90px;
@@ -208,6 +211,7 @@ body {
 	-webkit-backface-visibility: hidden;
 	backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
+	z-index: 5;
 }
 .card-back {
 	transform: rotateY(180deg);
@@ -218,9 +222,11 @@ body {
 	-webkit-backface-visibility: hidden;
 	backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
+	z-index: 10;
 }
 #player-hand-wrap {
 	max-width: calc(100vw - 600px);
+	min-width: 300px;
 	overflow-x: auto;
 	overflow-y: hidden;
 }
@@ -296,6 +302,7 @@ body {
 }
 .pyotr-face {
 	background: var(--green-color);
+	background-color: var(--green-color);
 	mask-repeat: no-repeat;
 	mask-size: 150% auto;
 	mask-position: 50% 0;
@@ -451,6 +458,7 @@ body {
 	justify-content: flex-start;
 	flex-wrap: nowrap;
 	gap: 25px;
+	padding: 0 20px 0 0;
 	overflow-x: visible;
 	overflow-y: auto;
 	max-height: calc(100vh - 200px);
@@ -474,6 +482,8 @@ body {
 .mode-button:hover {
 	background-color: #5c5c5c;
 	box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5);
+	-webkit-box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5);
+	-moz-box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5);
 }
 .active-mode {
 	color: black;
@@ -527,6 +537,8 @@ input:checked + .slider:before {
 }
 .slider:hover {
 	box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5);
+	-moz-box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5);
+	-webkit-box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5);
 }
 .graph {
 	overflow: visible;
@@ -554,7 +566,8 @@ input:checked + .slider:before {
 	left: -70px;
 }
 .ten-card {
-	width: 100px;
+	min-width: 100px;
+	max-width: 100px;
 	border-radius: 10px;
 }
 .ten-card .card-text {

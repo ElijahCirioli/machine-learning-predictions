@@ -1,0 +1,134 @@
+@media only screen and (max-width: 600px) {
+	#header-wrap {
+		width: 100%;
+		padding: 10px 0 0 10px;
+		height: 40px;
+	}
+	#logo-link {
+		width: 50px;
+	}
+	#header-title {
+		font-size: 16px;
+		margin: 0 0 0 10px;
+	}
+	#content-wrap {
+		flex-direction: column-reverse;
+		justify-content: flex-start;
+		align-items: center;
+		margin: 0 auto 50px auto;
+		min-width: 100%;
+		max-width: 100%;
+		padding: 0;
+		overflow-x: visible;
+	}
+	#cards-wrap {
+		min-height: 0;
+		align-items: center;
+		gap: 15px;
+	}
+	#player-hand-wrap {
+		max-width: 100%;
+	}
+	#computer-wrap {
+		width: 100%;
+		gap: 10px;
+	}
+	.card {
+		width: 80px;
+		border-radius: 8px;
+	}
+	.card-text {
+		top: 18px;
+		font-size: 56px;
+	}
+	.ten-card {
+		min-width: 60px;
+		max-width: 60px;
+		border-radius: 5px;
+	}
+	.ten-card .card-text {
+		top: 12px;
+		font-size: 44px;
+	}
+	#computer-card-text {
+		top: 18px;
+		font-size: 56px;
+	}
+	#graphs-wrap {
+		max-height: none;
+		gap: 0;
+	}
+	.graph {
+		transform: scale(0.8);
+	}
+	#pyotr-info {
+		width: 120px;
+		margin-top: 0;
+	}
+	#pyotr-title {
+		margin: 5px 0 0 10px;
+		font-size: 13px;
+	}
+	#pyotr-text {
+		margin: 5px 0 0 10px;
+		font-size: 9px;
+	}
+	#pyotr {
+		width: 120px;
+		height: 84px;
+		position: relative;
+	}
+	#score-wrap {
+		margin: 0;
+		width: 120px;
+	}
+	#score-text {
+		font-size: 60px;
+		margin: 20px 0 0 0;
+		height: 90px;
+	}
+	#round-text {
+		margin-bottom: 10px;
+	}
+	.small-text {
+		font-size: 13px;
+	}
+	#player-hand {
+		gap: 15px;
+		padding-top: 30px;
+		max-width: 100vw;
+		min-width: none;
+	}
+	.clickable-card:hover {
+		transform: none;
+	}
+	.selected-card {
+		transform: translateY(-30px);
+	}
+	#pyotr-eyes-wrap {
+		width: 45px;
+		left: 38px;
+		top: 42px;
+	}
+	.pyotr-eye {
+		width: 13px;
+		height: 13px;
+	}
+	.flip-card {
+		border-radius: inherit;
+	}
+	#settings-wrap {
+		margin-top: 20px;
+		gap: 15px;
+	}
+	.settings-group-items {
+		gap: 10px;
+	}
+	.settings-group-title {
+		margin: 0 0 8px 0;
+		font-size: 12px;
+	}
+	#reduce-animations-title {
+		font-size: 10px;
+	}
+}
