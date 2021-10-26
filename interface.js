@@ -1,12 +1,16 @@
+// the animation timing in milliseconds
 const minCardDisplayDuration = 500;
 const maxCardDisplayDuration = 2500;
 const reducedCardDisplayDuration = 1000;
 const animationDuration = 1500;
+
+// some flags and threads
 let animating = false;
 let disabled = false;
 let reducedAnimations = false;
 let waitingThread, eyeMoveThread, eyeReturnThread;
 
+// some data for displaying the cards
 const outputDisplays = {
 	2: {
 		inputs: ["A", "B"],
@@ -39,11 +43,13 @@ const outputDisplays = {
 	},
 };
 
+// scoring information
 let score = 0;
 let roundNumber = 0;
 let winStreak = 0;
 let numCorrect = 0;
 
+// handle button inputs
 function clickCard(id) {
 	const buttonLookup = {
 		aCard: [1, 0],
@@ -66,6 +72,18 @@ function clickCard(id) {
 	}
 }
 
+// show the correct player cards based on the round
+function displayPlayerCards() {
+	const allPossibleInputs = ["two", "three", "ten"];
+	const classLookup = { 2: "two", 3: "three", 10: "ten" };
+
+	for (const n of allPossibleInputs) {
+		$(`.${n}-card`).hide();
+	}
+	$(`.${classLookup[possibleInputs]}-card`).show();
+}
+
+// flip over the computer card and fill with correct data
 function displayComputerCard(index) {
 	const params = outputDisplays[possibleInputs];
 	if (params.images) {
@@ -85,26 +103,19 @@ function displayComputerCard(index) {
 		$("#computer-card-text").show();
 	}
 
+	// set timer for start of animation
 	$(".flip-card").addClass("active-flipped");
 	animating = true;
 	setTimeout(allowAnimationSkip, minCardDisplayDuration);
 }
 
-function displayPlayerCards() {
-	const allPossibleInputs = ["two", "three", "ten"];
-	const classLookup = { 2: "two", 3: "three", 10: "ten" };
-
-	for (const n of allPossibleInputs) {
-		$(`.${n}-card`).hide();
-	}
-	$(`.${classLookup[possibleInputs]}-card`).show();
-}
-
+// the card has flipped so they can skip
 function allowAnimationSkip() {
 	const waitDuration = reducedAnimations ? reducedCardDisplayDuration : maxCardDisplayDuration - minCardDisplayDuration;
 	waitingThread = setTimeout(startCardAnimation, waitDuration);
 }
 
+// start the animation to replace the computer card
 function startCardAnimation() {
 	waitingThread = undefined;
 	$(".flip-card").removeClass("active-flipped");
@@ -116,6 +127,7 @@ function startCardAnimation() {
 	}
 }
 
+// end the card animation and resume play
 function endCardAnimation() {
 	$(".computer-card").removeClass("animated-card");
 	animating = false;
@@ -175,6 +187,7 @@ function setupButtonActions() {
 	});
 }
 
+// reset scoring info
 function setupScore() {
 	roundNumber = 0;
 	score = 0;
@@ -185,6 +198,7 @@ function setupScore() {
 	$("#previous-computer-text").text("");
 }
 
+// adjust the score
 function updateScore(delta) {
 	score += delta;
 	roundNumber++;
@@ -199,6 +213,7 @@ function updatePreviousRoundDisplay(playerIndex, computerIndex) {
 	$("#previous-computer-text").text(`Pyotr: ${params.outputs[computerIndex]}`);
 }
 
+// give Pyotr a little personality
 function updateFacialExpression(correctPrediction) {
 	if (correctPrediction) {
 		winStreak = winStreak >= 0 ? winStreak + 1 : 0;
@@ -221,6 +236,7 @@ function updateFacialExpression(correctPrediction) {
 	$(`#face-${face}`).show();
 }
 
+// yeah, I'm basically Pixar
 function animateEyes() {
 	const eyeHoldTime = 1500;
 	const maxTimeToNextAnimation = 10000;

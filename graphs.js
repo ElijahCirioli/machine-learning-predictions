@@ -2,6 +2,7 @@ let scoreGraph, confidenceGraph, accuracyGraph;
 
 class Graph {
 	constructor(id, title, labelY) {
+		// aw geez, that's a lot of attributes...
 		this.id = id;
 		this.title = title;
 		this.width = 380;
@@ -22,6 +23,7 @@ class Graph {
 		this.context = this.canvas[0].getContext("2d");
 	}
 
+	// add the element to the DOM
 	createElement() {
 		$(`#${this.id}`).remove();
 		$("#graphs-wrap").append(
@@ -37,14 +39,17 @@ class Graph {
 		$(`#${this.id}`).append(`<p class="graph-axis-label graph-y-label">${this.labelY}</p>`);
 	}
 
+	// turn graph coordinates into pixel space for X
 	getScaledX(x) {
 		return (x * (this.width - 2 * this.offsetX)) / this.values.length + this.offsetX;
 	}
 
+	// turn graph coordinates into pixel space for Y
 	getScaledY(y) {
 		return ((this.maxY - y) * (this.height - this.offsetY)) / (this.maxY - this.minY) + this.offsetY;
 	}
 
+	// draw the graph (duh)
 	draw() {
 		this.context.clearRect(0, 0, this.width, this.height);
 		if (this.baselineY !== undefined) {
@@ -60,15 +65,19 @@ class Graph {
 		}
 	}
 
+	// draw the numeric labels on the axes and tip of the graph
 	drawAllLabels() {
+		// label the min and max values
 		this.context.fillStyle = "#e3e3e3";
 		this.context.font = "12px 'Roboto Mono', monospace";
 		this.context.textAlign = "right";
 		this.context.fillText(this.getLabelText(this.maxY), this.offsetX - 6, this.getScaledY(this.maxY) + 10);
 		this.context.fillText(this.getLabelText(this.minY), this.offsetX - 6, this.getScaledY(this.minY) - 3);
+		// if they have a baseline label that
 		if (this.baselineY !== undefined) {
 			this.context.fillText(this.getLabelText(this.baselineY), this.offsetX - 6, this.getScaledY(this.baselineY) + 4);
 		}
+		// label the graph point
 		this.context.textAlign = "left";
 		const mostRecentVal = this.values[this.values.length - 1];
 		let mostRecentScaled = this.getScaledY(mostRecentVal) + 4;
@@ -78,6 +87,7 @@ class Graph {
 		this.context.fillText(this.getLabelText(mostRecentVal), this.width - this.offsetX + 5, mostRecentScaled);
 	}
 
+	// this one's a little too advanced to explain
 	getLabelText(val) {
 		return val + "";
 	}
@@ -112,6 +122,7 @@ class Graph {
 		this.context.setLineDash([]);
 	}
 
+	// plot all the points on the graph
 	plotValues() {
 		this.context.strokeStyle = this.lineColor;
 		this.context.lineWidth = 3;
@@ -131,6 +142,7 @@ class Graph {
 	}
 }
 
+// score vs time
 class ScoreTimeGraph extends Graph {
 	constructor() {
 		super("score-time-graph", "Score vs Time", "Score");
@@ -155,6 +167,7 @@ class ScoreTimeGraph extends Graph {
 	}
 }
 
+// confidence (%) vs time
 class ConfidenceTimeGraph extends Graph {
 	constructor() {
 		super("confidence-time-graph", "Confidence vs Time", "Confidence");
@@ -170,6 +183,7 @@ class ConfidenceTimeGraph extends Graph {
 	}
 }
 
+// total accuracy (%) vs time
 class AccuracyTimeGraph extends Graph {
 	constructor() {
 		super("accuracy-time-graph", "Total Accuracy vs Time", "Accuracy");
@@ -185,6 +199,7 @@ class AccuracyTimeGraph extends Graph {
 	}
 }
 
+// update and redraw all the graphs
 function updateGraphs(confidence, correct) {
 	scoreGraph.addValue(score);
 	confidenceGraph.addValue(confidence);

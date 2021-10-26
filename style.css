@@ -24,7 +24,7 @@ body {
 	flex-wrap: nowrap;
 	justify-content: flex-start;
 	align-items: flex-start;
-	z-index: 2;
+	z-index: 10;
 }
 #content-wrap {
 	margin: 0;
